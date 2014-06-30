@@ -4,6 +4,20 @@
 #include <stdbool.h>
 #include <string.h>
 
+struct _config_data
+{
+    CONFIG_DATA *next;
+    char *key;
+    char *value;
+};
+
+struct _config_section
+{
+    char *key;
+    CONFIG_SECTION *next;
+    CONFIG_DATA *data;
+};
+
 #define DATA_SOURCE_ADD(T,S,D) \
     if (S && D){\
     T next = S;\
@@ -25,35 +39,21 @@ static bool Is_number(char* value)
 }
 
 
-struct _config_data
-{
-    CONFIG_DATA *next;
-    char *key;
-    char *value;
-};
-
-struct _config_section
-{
-    char *key;
-    CONFIG_SECTION *next;
-    CONFIG_DATA *data;
-};
-
-static inline CONFIG_SECTION* CreateNodeSource()
+static inline CONFIG_SECTION* create_section()
 {
     CONFIG_SECTION *pSource = (CONFIG_SECTION*)malloc(sizeof(CONFIG_SECTION));
     memset(pSource, 0, sizeof(CONFIG_DATA));
     return pSource;
 }
 
-static inline CONFIG_DATA* CreateNodeData()
+static inline CONFIG_DATA* create_section_data()
 {
     CONFIG_DATA *pData = (CONFIG_DATA*)malloc(sizeof(CONFIG_DATA));
     memset(pData, 0, sizeof(CONFIG_DATA));
     return pData;
 }
 
-static void FreeConfigData(CONFIG_DATA *pData)
+static void free_config_data(CONFIG_DATA *pData)
 {
     CONFIG_DATA *pNext = pData;
     while (pData)
@@ -73,7 +73,7 @@ void free_config(CONFIG_INI* config)
     {
         pSection  = config->next;
         free(config->key);
-        FreeConfigData(config->data);
+        free_config_data(config->data);
         config = pSection ;
     }
 }
@@ -134,19 +134,19 @@ static void Strip(char **start, char **end)
     *end = pEnd;
 }
 
-CONFIG_SECTION* ParseSource(char *pValue, int nLen)
+static CONFIG_SECTION* parse_section(char *pValue, int nLen)
 {
-    CONFIG_SECTION *pSource = CreateNodeSource();
-    pSource->key = (char*)malloc(nLen + 1);
-    memcpy(pSource->key, pValue, nLen);
-    pSource->key[nLen] = 0;
-    return pSource;
+    CONFIG_SECTION *pSection = create_section();
+    pSection->key = (char*)malloc(nLen + 1);
+    memcpy(pSection->key, pValue, nLen);
+    pSection->key[nLen] = 0;
+    return pSection;
 }
 
-CONFIG_DATA* ParseData(char *pValue, int nVLen)
+CONFIG_DATA* parse_data(char *pValue, int nVLen)
 {
     char *pEnd = pValue + nVLen, *pStart = pValue;
-    CONFIG_DATA *pData = CreateNodeData();
+    CONFIG_DATA *pData = create_section_data();
     int nLen;
     while (pStart < pEnd)
     {
@@ -239,7 +239,7 @@ CONFIG_INI* read_iniconfig(char *szFileName)
         // parse the string
         if (*pStart == '[' && *pEnd == ']')
         {
-            CONFIG_SECTION *pTemp = ParseSource(pStart + 1, pEnd - pStart -1);
+            CONFIG_SECTION *pTemp = parse_section(pStart + 1, pEnd - pStart -1);
             if (!pTemp)
             {
                 bIsParse = false;
@@ -257,7 +257,7 @@ CONFIG_INI* read_iniconfig(char *szFileName)
         }
         else if (*pStart != '=')
         {
-            CONFIG_DATA* pData = ParseData(pStart, pEnd - pStart + 1);
+            CONFIG_DATA* pData = parse_data(pStart, pEnd - pStart + 1);
             if (!pData || !pSource)
             {
                 continue;
