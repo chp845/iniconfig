@@ -1,3 +1,20 @@
+/*
+ * =====================================================================================
+ *
+ *       Filename:  iniconfig.h
+ *
+ *    Description:  
+ *
+ *        Version:  1.0
+ *        Created:  2014年06月30日 16时48分21秒
+ *       Revision:  none
+ *       Compiler:  gcc
+ *
+ *         Author:  cheng (), chp845@hotmail.com
+ *   Organization:  
+ *
+ * =====================================================================================
+ */
 #ifndef _INI_CONFIG_H
 #define _INI_CONFIG_H
 #include <stdbool.h>
@@ -17,6 +34,6 @@ void free_config(CONFIG_INI* config);
 
 bool get_profilestring(CONFIG_INI* config,  char* section, char* key,  char** value);
 
-bool get_profileini(CONFIG_INI* config, char* section, char* key, int* value);
+bool get_profileint(CONFIG_INI* config, char* section, char* key, int* value);
 
 #endif // _INI_CONFIG_H

@@ -1,3 +1,20 @@
+﻿/*
+ * =====================================================================================
+ *
+ *       Filename:  iniconfig.c
+ *
+ *    Description:  
+ *
+ *        Version:  1.0
+ *        Created:  2014年06月30日 16时48分24秒
+ *       Revision:  none
+ *       Compiler:  gcc
+ *
+ *         Author:  cheng (), chp845@hotmail.com
+ *   Organization:  
+ *
+ * =====================================================================================
+ */
 #include "iniconfig.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -6,9 +23,9 @@
 
 struct _config_data
 {
-    CONFIG_DATA *next;
     char *key;
     char *value;
+    CONFIG_DATA *next;
 };
 
 struct _config_section
@@ -18,7 +35,7 @@ struct _config_section
     CONFIG_DATA *data;
 };
 
-#define DATA_SOURCE_ADD(T,S,D) \
+#define SECTION_DATA_ADD(T,S,D) \
     if (S && D){\
     T next = S;\
     while (next->next){next = next->next;}\
@@ -247,7 +264,7 @@ CONFIG_INI* read_iniconfig(char *szFileName)
             }
             if (pSource)
             {
-                DATA_SOURCE_ADD(CONFIG_SECTION*, pSource, pTemp);
+                SECTION_DATA_ADD(CONFIG_SECTION*, pSource, pTemp);
             }
             if (!pSource)
             {
@@ -268,7 +285,7 @@ CONFIG_INI* read_iniconfig(char *szFileName)
             }
             else
             {
-                DATA_SOURCE_ADD(CONFIG_DATA*, pSource->data, pData);
+                SECTION_DATA_ADD(CONFIG_DATA*, pSource->data, pData);
             }
         }
     }
@@ -330,7 +347,7 @@ bool get_profilestring(CONFIG_INI* config,  char* section, char* key,  char** va
     return true;
 }
 
-bool get_profileini(CONFIG_INI* config, char* section, char* key, int* value)
+bool get_profileint(CONFIG_INI* config, char* section, char* key, int* value)
 {
     if (!config || !section || !key || !value )
     {
