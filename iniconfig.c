@@ -333,7 +333,7 @@ bool get_profilestring(CONFIG_INI* config,  char* section, char* key,  char** va
     {
         return false;
     }
-    CONFIG_SECTION* pSection = get_config_section(config, key);
+    CONFIG_SECTION* pSection = get_config_section(config, section);
     if (!pSection)
     {
         return false;
@@ -353,7 +353,7 @@ bool get_profileint(CONFIG_INI* config, char* section, char* key, int* value)
     {
         return false;
     }
-    CONFIG_SECTION* pSection = get_config_section(config, key);
+    CONFIG_SECTION* pSection = get_config_section(config, section);
     if (!pSection)
     {
         return false;
